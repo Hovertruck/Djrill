@@ -42,7 +42,14 @@ class DjrillBackend(BaseEmailBackend):
             raise ImproperlyConfigured("You have not added the Mandrill api "
                 "url to your settings.py")
 
-        self.api_action = self.api_url + "/messages/send.json"
+    def _get_api_action(self, message):
+        """
+        Determine what API to hit by inspecting the message being sent
+        """
+        if message.template is not None:
+            return "%s/messages/send_template.json" % self.api_url
+
+        return "%s/messages/send.json" % self.api_url
 
     def send_messages(self, email_messages):
         if not email_messages:
@@ -90,7 +97,7 @@ class DjrillBackend(BaseEmailBackend):
         if message.template_content is not None:
             post_content["template_content"] = message.template_content
 
-        djrill_it = requests.post(self.api_action, data=json.dumps(post_content))
+        djrill_it = requests.post(self._get_api_action(message), data=json.dumps(post_content))
 
         if djrill_it.status_code != 200:
             if not self.fail_silently:
