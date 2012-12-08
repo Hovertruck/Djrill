@@ -90,7 +90,7 @@ class DjrillBackend(BaseEmailBackend):
         if message.template_content is not None:
             post_content["template_content"] = message.template_content
 
-        djrill_it = requests.post(self.api_action, data=json.dumps(post_content)
+        djrill_it = requests.post(self.api_action, data=json.dumps(post_content))
 
         if djrill_it.status_code != 200:
             if not self.fail_silently:
