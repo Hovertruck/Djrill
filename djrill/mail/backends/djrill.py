@@ -79,10 +79,18 @@ class DjrillBackend(BaseEmailBackend):
                 raise
             return False
 
-        djrill_it = requests.post(self.api_action, data=json.dumps({
+        post_content = {
             "key": self.api_key,
-            "message": self.msg_dict
-        }))
+            "message": self.msg_dict,
+        }
+
+        if message.template_name is not None:
+            post_content["template_name"] = message.template_name
+
+        if message.template_content is not None:
+            post_content["template_content"] = message.template_content
+
+        djrill_it = requests.post(self.api_action, data=json.dumps(post_content)
 
         if djrill_it.status_code != 200:
             if not self.fail_silently:
