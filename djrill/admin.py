@@ -1,3 +1,4 @@
+"""
 from django.contrib import admin
 
 from djrill.views import (DjrillIndexView, DjrillSendersListView,
@@ -12,3 +13,4 @@ admin.site.register_view("djrill/tags/", DjrillTagListView.as_view(),
     "djrill_tags", "tags")
 admin.site.register_view("djrill/urls/", DjrillUrlListView.as_view(),
     "djrill_urls", "urls")
+"""
