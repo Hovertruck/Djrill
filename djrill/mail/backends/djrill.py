@@ -46,7 +46,7 @@ class DjrillBackend(BaseEmailBackend):
         """
         Determine what API to hit by inspecting the message being sent
         """
-        if message.template_name is not None:
+        if hasattr(message, 'template_name') and message.template_name is not None:
             return "%s/messages/send-template.json" % self.api_url
 
         return "%s/messages/send.json" % self.api_url
