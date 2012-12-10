@@ -7,6 +7,9 @@ from django.utils import simplejson as json
 from email.utils import parseaddr
 import requests
 
+def is_template_message(message):
+    return hasattr(message, 'template_name') and message.template_name is not None
+
 class DjrillBackendHTTPError(Exception):
     """An exception that will turn into an HTTP error response."""
     def __init__(self, status_code, log_message=None):
@@ -46,7 +49,7 @@ class DjrillBackend(BaseEmailBackend):
         """
         Determine what API to hit by inspecting the message being sent
         """
-        if hasattr(message, 'template_name') and message.template_name is not None:
+        if is_template_message(message):
             return "%s/messages/send-template.json" % self.api_url
 
         return "%s/messages/send.json" % self.api_url
@@ -91,10 +94,8 @@ class DjrillBackend(BaseEmailBackend):
             "message": self.msg_dict,
         }
 
-        if message.template_name is not None:
+        if is_template_message(message):
             post_content["template_name"] = message.template_name
-
-        if message.template_content is not None:
             post_content["template_content"] = message.template_content
 
         djrill_it = requests.post(self._get_api_action(message), data=json.dumps(post_content))
